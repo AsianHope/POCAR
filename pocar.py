@@ -62,7 +62,7 @@ class MyProgram:
         #self.label.set_markup(init)
         #self.student_id.add(self.label)
 
-        pixbuf = gtk.gdk.pixbuf_new_from_file("resource/OK.JPG")
+        pixbuf = gtk.gdk.pixbuf_new_from_file("static/OK.JPG")
         scaled_buf = pixbuf.scale_simple(177,266,gtk.gdk.INTERP_BILINEAR)
 
         self.pickup_students = ['0']*9 #seed the list with the size we want
@@ -105,7 +105,7 @@ class MyProgram:
         self.app_window.add(vbox)
 
         self.image = gtk.Image()
-        pixbuf = gtk.gdk.pixbuf_new_from_file("resource/logo.png")
+        pixbuf = gtk.gdk.pixbuf_new_from_file("static/logo.png")
         scaled_buf = pixbuf.scale_simple(472,709,gtk.gdk.INTERP_BILINEAR)
         self.image.set_from_pixbuf(scaled_buf)
         self.image.show()
@@ -124,7 +124,7 @@ class MyProgram:
     def search_button_clicked(self, widget, data=None):
         for i in range(0,9):
             #make sure all pictures are reset
-            pixbuf = gtk.gdk.pixbuf_new_from_file("resource/NA.JPG")
+            pixbuf = gtk.gdk.pixbuf_new_from_file("static/NA.JPG")
             scaled_buf = pixbuf.scale_simple(177,266,gtk.gdk.INTERP_BILINEAR)
             self.pickup_students[i].set_from_pixbuf(scaled_buf)
 
@@ -168,7 +168,7 @@ class MyProgram:
                     print("Wee") 
                 i+=1
         except:
-            pixbuf = gtk.gdk.pixbuf_new_from_file("resource/OK.JPG")
+            pixbuf = gtk.gdk.pixbuf_new_from_file("static/OK.JPG")
             scaled_buf = pixbuf.scale_simple(472,709,gtk.gdk.INTERP_BILINEAR)
             self.image.set_from_pixbuf(scaled_buf)
 
