@@ -29,7 +29,6 @@ class MyProgram:
             for item in info:
                 if(i>=2): #parent_id, name, student1, student2, student3... student9
                     student_list.append(info[i])
-                    print(info[i])
                 i+=1
 
             self.parents[pid] = student_list
@@ -139,7 +138,6 @@ class MyProgram:
         except KeyError:
             names = "NA"
 
-        print names
         #display the result
         #successful result
         #result = '<span background="green"><span size="128000">'+pid+'</span>\n<span size="64000">'+name+'</span></span>'
@@ -159,13 +157,11 @@ class MyProgram:
             
             i = 0
             for sid in names:
-                print("working on sid:"+sid)
                 try:
                     pixbuf = gtk.gdk.pixbuf_new_from_file("resource/"+sid+".JPG")
                     scaled_buf = pixbuf.scale_simple(177,266,gtk.gdk.INTERP_BILINEAR)
                     self.pickup_students[i].set_from_pixbuf(scaled_buf)
-                except:
-                    print("Wee") 
+                except: break
                 i+=1
         except:
             pixbuf = gtk.gdk.pixbuf_new_from_file("static/OK.JPG")
