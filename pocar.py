@@ -31,7 +31,7 @@ class MyProgram:
                     student_list.append(info[i])
                 i+=1
 
-            self.parents[pid] = student_list
+            self.parents.update({pid:student_list})
 
         #create a new window
         self.app_window = gtk.Window(gtk.WINDOW_TOPLEVEL)
@@ -151,7 +151,7 @@ class MyProgram:
 
         #load pictures
         try:
-            pixbuf = gtk.gdk.pixbuf_new_from_file("resource/"+pid+".JPG")
+            pixbuf = gtk.gdk.pixbuf_new_from_file("resource/"+pid+".jpg")
             scaled_buf = pixbuf.scale_simple(472,709,gtk.gdk.INTERP_BILINEAR)
             self.image.set_from_pixbuf(scaled_buf)
             
