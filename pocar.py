@@ -15,7 +15,7 @@ class MyProgram:
             f = open('parents.csv')
         except:
            parent = None
-           md = gtk.MessageDialog(parent, gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_INFO, 
+           md = gtk.MessageDialog(parent, gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_INFO,
                     gtk.BUTTONS_CLOSE, "Can't open file!")
            md.run()
            sys.exit(1)
@@ -27,7 +27,7 @@ class MyProgram:
             i = 0
 
             for item in info:
-                if(i>=2): #parent_id, name, student1, student2, student3... student9
+                if(i>=1): #parent_id, name, student1, student2, student3... student9
                     student_list.append(info[i])
                 i+=1
 
@@ -40,8 +40,8 @@ class MyProgram:
 
         #change color of window??
         #self.green = gtk.gdk.color_parse('green')
-        #self.red = gtk.gdk.color_parse('red')
-        #self.app_window.modify_bg(gtk.STATE_NORMAL,self.green)
+        #self.black = gtk.gdk.color_parse('black')
+        #self.app_window.modify_bg(gtk.STATE_NORMAL,self.black)
 
         #add entry and search fields
         self.entry = gtk.Entry()
@@ -56,12 +56,12 @@ class MyProgram:
         spacer1 = gtk.EventBox()
         spacer2 = gtk.EventBox()
 
-        #self.label=gtk.Label("Please scan a card")
-        #init = '<span background="gray"><span size="128000">XXX</span>\n<span size="64000">Please scan a card</span></span>'
-        #self.label.set_markup(init)
-        #self.student_id.add(self.label)
+        self.pnamelabel=gtk.Label("Parentsen, Parentina")
+        init = '<span size="64000">Logos Pickup Card System</span>'
+        self.pnamelabel.set_markup(init)
+        spacer1.add(self.pnamelabel)
 
-        pixbuf = gtk.gdk.pixbuf_new_from_file("static/OK.JPG")
+        pixbuf = gtk.gdk.pixbuf_new_from_file("static/logo.png")
         scaled_buf = pixbuf.scale_simple(177,266,gtk.gdk.INTERP_BILINEAR)
 
         self.pickup_students = ['0']*9 #seed the list with the size we want
@@ -94,10 +94,10 @@ class MyProgram:
         student_info.pack_start(self.student_pic,fill=False)
         #student_info.pack_start(self.student_id,fill=False)
         student_info.pack_start(self.label, True, True, 0)
-        
-        bottom_area.pack_start(spacer1)
+
+        bottom_area.pack_start(spacer1, fill=False)
         bottom_area.pack_start(controls)
-        bottom_area.pack_start(spacer2)
+       # bottom_area.pack_start(spacer2)
 
         vbox.pack_start(student_info)
         vbox.pack_start(bottom_area)
@@ -123,48 +123,68 @@ class MyProgram:
     def search_button_clicked(self, widget, data=None):
         for i in range(0,9):
             #make sure all pictures are reset
-            pixbuf = gtk.gdk.pixbuf_new_from_file("static/NA.JPG")
+            pixbuf = gtk.gdk.pixbuf_new_from_file("static/logo.png")
             scaled_buf = pixbuf.scale_simple(177,266,gtk.gdk.INTERP_BILINEAR)
             self.pickup_students[i].set_from_pixbuf(scaled_buf)
 
-
-        #intersting stuff goes here
         #grab pid
         pid = self.entry.get_text()
 
         #do a lookup for the name
         try:
-            names = self.parents[pid]
+            #explictly make a copy, otherwise list gets popped away
+            names = list(self.parents[pid])
+            #reverse the list
+            names.reverse()
+            #pop the parents name
+            pname = names.pop()
+            #put it back in order
+            names.reverse()
+
+            print(self.parents[pid])
+
+            #display parent's name
+            pmarkup = '<span size="64000">'+pname+'</span>'
+
+            self.pnamelabel.set_markup(pmarkup)
+            self.pnamelabel.show()
+
+
         except KeyError:
+            #display an error
+            pmarkup = '<span color="red" size="64000">Card Not Found</span>'
+            self.pnamelabel.set_markup(pmarkup)
+            self.pnamelabel.show()
+
+
             names = "NA"
 
-        #display the result
-        #successful result
-        #result = '<span background="green"><span size="128000">'+pid+'</span>\n<span size="64000">'+name+'</span></span>'
-
-        #if name == 'NA':
-        #    result = '<span background="red"><span size="128000">'+pid+'</span>\n<span size="64000">No Lunch!</span></span>'
-            #pid = names
-            #self.app_window.modify_bg(gtk.STATE_NORMAL, self.red)
-        #self.label.set_markup(result)
-        #self.label.show()
-
-        #load pictures
+                #load pictures
+        #if the parent picture exists
         try:
             pixbuf = gtk.gdk.pixbuf_new_from_file("resource/"+pid+".jpg")
             scaled_buf = pixbuf.scale_simple(472,709,gtk.gdk.INTERP_BILINEAR)
             self.image.set_from_pixbuf(scaled_buf)
-            
+
+            #try and load the studnts starting after the parents name
             i = 0
             for sid in names:
-                try:
-                    pixbuf = gtk.gdk.pixbuf_new_from_file("resource/"+sid+".JPG")
-                    scaled_buf = pixbuf.scale_simple(177,266,gtk.gdk.INTERP_BILINEAR)
-                    self.pickup_students[i].set_from_pixbuf(scaled_buf)
-                except: break
+                #account for blank fields. If there's no length, don't bother.
+                if len(sid):
+                #if the student picture exists, load it
+                    try:
+                        pixbuf = gtk.gdk.pixbuf_new_from_file("resource/"+sid+".JPG")
+                        scaled_buf = pixbuf.scale_simple(177,266,gtk.gdk.INTERP_BILINEAR)
+                        self.pickup_students[i].set_from_pixbuf(scaled_buf)
+                    #if not, load the NA picture to indicate a student w/o a picture
+                    except: 
+                        pixbuf = gtk.gdk.pixbuf_new_from_file("static/NA.JPG")
+                        scaled_buf = pixbuf.scale_simple(177,266,gtk.gdk.INTERP_BILINEAR)
+                        self.pickup_students[i].set_from_pixbuf(scaled_buf)
                 i+=1
+        #if there is no parent picture, indicate it.
         except:
-            pixbuf = gtk.gdk.pixbuf_new_from_file("static/OK.JPG")
+            pixbuf = gtk.gdk.pixbuf_new_from_file("static/NA.JPG")
             scaled_buf = pixbuf.scale_simple(472,709,gtk.gdk.INTERP_BILINEAR)
             self.image.set_from_pixbuf(scaled_buf)
 
@@ -181,4 +201,3 @@ def main():
 if __name__=="__main__":
     MyProgram()
     main()
-
